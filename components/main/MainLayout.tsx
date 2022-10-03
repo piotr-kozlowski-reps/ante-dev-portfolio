@@ -7,12 +7,24 @@ interface Props {
 const MainLayout: React.FunctionComponent<Props> = (props: Props) => {
   return (
     <React.Fragment>
-      <div className="h-screen flex flex-col items-center justify-center">
-        <div>
-          <h1 className="text-5xl uppercase">asdcadfs</h1>
+      <div className="h-screen flex flex-col items-center justify-center bg-slate-600">
+        <div className="flex justify-between items-center w-full p-6 self-end">
+          <div className="">
+            <p>logo</p>
+          </div>
+          <div>
+            <ul className="flex justify-end gap-4 uppercase text-sm">
+              <li>info</li>
+              <li>portfolio</li>
+              <li>kontakt</li>
+            </ul>
+          </div>
         </div>
         <div>
-          <h3 className="text-2xl">asdcadfs</h3>
+          <h1 className="text-5xl uppercase">MAIN TITLE</h1>
+        </div>
+        <div>
+          <h3 className="text-2xl">medium title</h3>
         </div>
         <div>
           <p className="text-sm px-4">
