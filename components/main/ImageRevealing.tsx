@@ -1,13 +1,13 @@
 import * as React from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
 interface Props {
   // children: React.ReactNode;
 }
 const ImageRevealing: React.FunctionComponent<Props> = (props: Props) => {
+  gsap.registerPlugin(ScrollTrigger);
   const imageOff = React.useRef(null);
   const imageOn = React.useRef(null);
 
@@ -15,32 +15,47 @@ const ImageRevealing: React.FunctionComponent<Props> = (props: Props) => {
 
   React.useEffect(() => {
     gsap.fromTo(
-      imageOn.current,
+      imageOff.current,
       { autoAlpha: 0 },
       { autoAlpha: 1, duration: 3 }
     );
 
-    imagesArray.forEach((image) => {
-      console.log(image);
-
-      let tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: document.querySelector("body"),
-          start: "center center",
-          // end: () => "+=100",
-          pin: true,
-          anticipatePin: 1,
-          scrub: true,
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.querySelector("body"),
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (event) => {
+          console.log(event.progress);
         },
-      });
-
-      tl.fromTo(imageOff, { xPercent: 100, x: 0 }, { xPercent: 0 }).fromTo(
-        imageOn,
-        { xPercent: -100, x: 0 },
-        { xPercent: 0 },
-        0
-      );
+        // pin: true,
+        scrub: true,
+      },
     });
+
+    tl.from(imageOff, { x: -100 });
+
+    // imagesArray.forEach((image) => {
+    //   console.log(image);
+
+    //   let tl = gsap.timeline({
+    //     scrollTrigger: {
+    //       trigger: document.querySelector("body"),
+    //       start: "center center",
+    //       // end: () => "+=100",
+    //       pin: true,
+    //       anticipatePin: 1,
+    //       scrub: true,
+    //     },
+    //   });
+
+    //   tl.fromTo(imageOff, { xPercent: 100, x: 0 }, { xPercent: 0 }).fromTo(
+    //     imageOn,
+    //     { xPercent: -100, x: 0 },
+    //     { xPercent: 0 },
+    //     0
+    //   );
+    // });
 
     // gsap.utils.toArray(".comparisonSection").forEach((section) => {
     //   let tl = gsap.timeline({
@@ -74,17 +89,17 @@ const ImageRevealing: React.FunctionComponent<Props> = (props: Props) => {
   return (
     <React.Fragment>
       <div className="">
-        <div ref={imageOff} className="fixed ">
+        <div ref={imageOff}>
           <Image
             src={"/images/face__off.jpg"}
             alt=""
-            width={800}
-            height={800}
+            width={600}
+            height={600}
           />
         </div>
-        <div ref={imageOn} className="fixed ">
-          <Image src={"/images/face__on.jpg"} alt="" width={800} height={800} />
-        </div>
+        {/* <div ref={imageOn} className="fixed "> */}
+        {/* <Image src={"/images/face__on.jpg"} alt="" width={800} height={800} /> */}
+        {/* </div> */}
       </div>
     </React.Fragment>
   );

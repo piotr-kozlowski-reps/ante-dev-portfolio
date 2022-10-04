@@ -7,34 +7,25 @@ interface Props {
 const MainLayout: React.FunctionComponent<Props> = (props: Props) => {
   return (
     <React.Fragment>
-      <div className="h-screen flex flex-col items-center justify-center bg-slate-600">
-        <div className="flex justify-between items-center w-full p-6 self-end">
-          <div className="">
+      {/* landingPage */}
+      <div className="h-screen flex flex-col justify-between bg-red-100">
+        <div className="bg-red-200 flex justify-between items-center p-4">
+          <div className="bg-red-500 p-2">
             <p>logo</p>
           </div>
           <div>
             <ul className="flex justify-end gap-4 uppercase text-sm">
-              <li>info</li>
+              <li>bio</li>
               <li>portfolio</li>
               <li>kontakt</li>
             </ul>
           </div>
         </div>
-        <div>
-          <h1 className="text-5xl uppercase">MAIN TITLE</h1>
+        <div className="flex justify-center items-center">
+          <ImageRevealing />
         </div>
-        <div>
-          <h3 className="text-2xl">medium title</h3>
-        </div>
-        <div>
-          <p className="text-sm px-4">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit
-            architecto provident excepturi et iure aliquam consequuntur soluta
-            molestias cupiditate labore.
-          </p>
-        </div>
+        <div className="flex justify-center uppercase bg-red-400 p-2">VV</div>
       </div>
-      {/* <ImageRevealing /> */}
       <div className="text-5xl">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae
@@ -97,6 +88,7 @@ const MainLayout: React.FunctionComponent<Props> = (props: Props) => {
           voluptatibus nostrum.
         </p>
       </div>
+      ;
     </React.Fragment>
   );
 };
@@ -167,3 +159,39 @@ export default MainLayout;
 // };
 
 // export default MainLayout;
+
+// <div className="bg-slate-600 h-screen w-screen p-6 flex justify-evenly">
+//   {/* <div className="flex flex-col items-center justify-center"> */}
+//   <div className="flex flex-col justify-center items-center bg-red-600">
+//     {/* <div className="flex justify-between items-center w-full"> */}
+//     <div className="">
+//       <div className="">
+//         <p>logo</p>
+//       </div>
+//       <div>
+//         <ul className="flex justify-end gap-4 uppercase text-sm">
+//           <li>info</li>
+//           <li>portfolio</li>
+//           <li>kontakt</li>
+//         </ul>
+//       </div>
+//     </div>
+//     <div>
+//       <h1 className="text-5xl uppercase">MAIN TITLE</h1>
+//     </div>
+//     <div>
+//       <h3 className="text-2xl">medium title</h3>
+//     </div>
+//     <div>
+//       <p className="text-sm px-4">
+//         Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit
+//         architecto provident excepturi et iure aliquam consequuntur soluta
+//         molestias cupiditate labore.
+//       </p>
+//     </div>
+//   </div>
+//   {/* </div> */}
+// </div>;
+// {
+//   /* <ImageRevealing /> */
+// }
