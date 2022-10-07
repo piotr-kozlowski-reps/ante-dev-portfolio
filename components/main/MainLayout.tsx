@@ -1,3 +1,4 @@
+import Image from "next/image";
 import * as React from "react";
 import ImageRevealing from "./ImageRevealing";
 
@@ -8,23 +9,33 @@ const MainLayout: React.FunctionComponent<Props> = (props: Props) => {
   return (
     <React.Fragment>
       {/* landingPage */}
-      <div className="h-screen flex flex-col justify-between bg-red-100">
-        <div className="bg-red-200 flex justify-between items-center p-4">
+      <div className="h-screen flex flex-col justify-between bg-background-1">
+        <div className="flex justify-between items-center p-4">
           <div className="bg-red-500 p-2">
             <p>logo</p>
           </div>
-          <div>
-            <ul className="flex justify-end gap-4 uppercase text-sm">
-              <li>bio</li>
-              <li>portfolio</li>
-              <li>kontakt</li>
+          <div className="p-6">
+            <ul className="md:flex justify-end gap-4 uppercase text-sm font-quicksand font-semibold hidden text-white">
+              <li>home</li>
+              <li>about</li>
+              <li>projects</li>
+              <li>contact</li>
             </ul>
+            <div className="md:hidden">
+              <Image
+                src={"/hamburger.svg"}
+                alt="hamburger icon"
+                width={35}
+                height={35}
+                className="cursor-pointer"
+              />
+            </div>
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <ImageRevealing />
+          {/* <ImageRevealing /> */}
         </div>
-        <div className="flex justify-center uppercase bg-red-400 p-2">VV</div>
+        <div className="flex justify-center uppercase bg-background-1">VV</div>
       </div>
       <div className="text-5xl">
         <p>
