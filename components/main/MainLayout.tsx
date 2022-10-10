@@ -1,37 +1,50 @@
 import Image from "next/image";
-import * as React from "react";
+import React, { FunctionComponent, useEffect, useRef } from "react";
+
+import {
+  mouseOverHandler,
+  mouseOutHandler,
+  hamburgerIntoXAnimation,
+} from "../../utils/animations";
 import ImageRevealing from "./ImageRevealing";
+import { gsap } from "gsap/dist/gsap";
+import Navigation from "../Navigation";
 
 interface Props {
   // children: React.ReactNode;
 }
-const MainLayout: React.FunctionComponent<Props> = (props: Props) => {
+const MainLayout: FunctionComponent<Props> = (props: Props) => {
+  // let hamburgerIconRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   console.log(hamburgerIconRef);
+
+  // hamburgerIntoXAnimation.bind(null, hamburgerIconRef);
+  //   gsap.fromTo(
+  //     hamburgerIconRef.current,
+  //     { scaleY: 1, scaleX: 1, rotateZ: 0 },
+  //     {
+  //       // scaleY: 10,
+  //       // scaleX: 10,
+  //       scaleY: 0.25,
+  //       scaleX: 1.1,
+  //       rotateZ: 45,
+  //       // ease: Power4.easeOut,
+  //       duration: 0.4,
+  //     }
+  //   );
+  // }, [hamburgerIconRef]);
+
   return (
     <React.Fragment>
       {/* landingPage */}
-      <div className="h-screen flex flex-col justify-between bg-background-1">
-        <div className="flex justify-between items-center p-4">
-          <div className="bg-red-500 p-2">
-            <p>logo</p>
-          </div>
-          <div className="p-6">
-            <ul className="md:flex justify-end gap-4 uppercase text-sm font-quicksand font-semibold hidden text-white">
-              <li>home</li>
-              <li>about</li>
-              <li>projects</li>
-              <li>contact</li>
-            </ul>
-            <div className="md:hidden">
-              <Image
-                src={"/hamburger.svg"}
-                alt="hamburger icon"
-                width={35}
-                height={35}
-                className="cursor-pointer"
-              />
-            </div>
-          </div>
-        </div>
+      <div
+        style={{
+          backgroundImage: `url("/temporary-bg/iPhone14ProMax-1.jpg")`,
+        }}
+        className="h-screen flex flex-col justify-between bg-background-1 bg-no-repeat bg-cover"
+      >
+        <Navigation />
         <div className="flex justify-center items-center">
           {/* <ImageRevealing /> */}
         </div>
