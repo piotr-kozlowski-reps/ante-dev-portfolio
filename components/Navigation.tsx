@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
 import {
@@ -6,22 +7,42 @@ import {
   XIntoHamburgerAnimation,
   hamburgerIntoSeparatorAnimation,
   separatorIntoHamburgerAnimation,
+  revealingElementsAnimation,
 } from "../utils/animations";
 import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
 
 interface Props {
+  timeline: gsap.core.Timeline;
   // children: React.ReactNode;
 }
-const Navigation: FunctionComponent<Props> = (props: Props) => {
+const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   ////vars
   let hamburgerIconRef1 = useRef<HTMLDivElement>(null);
   let hamburgerIconRef2 = useRef<HTMLDivElement>(null);
+  let homeRef = useRef<HTMLLIElement>(null);
+  let aboutRef = useRef<HTMLLIElement>(null);
+  let projectsRef = useRef<HTMLLIElement>(null);
+  let contactRef = useRef<HTMLLIElement>(null);
+  let githubRef = useRef<HTMLDivElement>(null);
+  let linkedinRef = useRef<HTMLDivElement>(null);
   const [isHamburger, setIsHamburger] = useState(true);
   const [isSmallSizeWidth, setIsSmallSizeWidth] = useState(true);
   const [width, height] = useDeviceSize();
 
+  const menuLinks = [
+    homeRef.current,
+    aboutRef.current,
+    projectsRef.current,
+    contactRef.current,
+  ];
+  const menuIcons = [githubRef.current, linkedinRef.current];
+
   ////logic
+  function isLessThanOrEqualMdSize() {
+    return width < 768 ? true : false;
+  }
+
   /** Starting effect that hides clone od hamburger (clone that is used later for making "X" sign) */
   useEffect(() => {
     gsap.to(hamburgerIconRef2.current, { autoAlpha: 0 });
@@ -29,11 +50,11 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
 
   /** Toggling HamburgerIcon and "X" */
   function toggleHamburgerIcon() {
-    if (isHamburger) {
+    if (isHamburger && isLessThanOrEqualMdSize()) {
       hamburgerIntoXAnimation(hamburgerIconRef1, hamburgerIconRef2);
       setIsHamburger(false);
     }
-    if (!isHamburger) {
+    if (!isHamburger && isLessThanOrEqualMdSize()) {
       XIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
       setIsHamburger(true);
     }
@@ -41,15 +62,30 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
 
   /** Triggering animation of Hamburger Icon when media query changes */
   useEffect(() => {
-    if (isSmallSizeWidth && width >= 768) {
+    if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
       hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
+      // revealingElementsAnimation(menuLinks, timeline, 0.6);
+      // revealingElementsAnimation(menuIcons, timeline, 0);
       setIsSmallSizeWidth(false);
     }
-    if (!isSmallSizeWidth && width < 768) {
+    if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
       separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
       setIsSmallSizeWidth(true);
     }
-  }, [width, height]);
+  }, [width, height, isSmallSizeWidth]);
+
+  /** Main timeline animation */
+  useEffect(() => {
+    if (timeline && menuLinks && menuIcons) {
+      revealingElementsAnimation(menuLinks, timeline, 0.6);
+      revealingElementsAnimation(menuIcons, timeline, 0);
+    }
+  }, [timeline, revealingElementsAnimation]);
+
+  ////utils - later delete
+  function alertHandler(message: string) {
+    alert(message);
+  }
 
   ////jsx
   return (
@@ -58,15 +94,83 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
         <div className="bg-red-500 p-2 absolute top-6 left-6">
           <p>logo</p>
         </div>
-        <div className="absolute top-6 right-6">
-          <ul className="uppercase text-sm font-quicksand font-semibold text-white">
-            <li>home</li>
-            <li>about</li>
-            <li>projects</li>
-            <li>contact</li>
-          </ul>
+        <div>
+          <div className="absolute top-7 right-32" style={{ paddingTop: 1 }}>
+            <ul className="uppercase text-xs font-quicksand font-semibold text-white flex gap-4 justify-end items-center">
+              <li
+                className="cursor-pointer transition ease-out hover:scale-105"
+                ref={homeRef}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    home
+                  </span>
+                </Link>
+              </li>
+              <li
+                className="cursor-pointer transition ease-out hover:scale-105"
+                ref={aboutRef}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    about
+                  </span>
+                </Link>
+              </li>
+              <li
+                className="cursor-pointer transition ease-out hover:scale-105"
+                ref={projectsRef}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    projects
+                  </span>
+                </Link>
+              </li>
+              <li
+                className="cursor-pointer transition ease-out hover:scale-105"
+                ref={contactRef}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    contact
+                  </span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div className="absolute top-7 right-7 flex justify-end items-center gap-4">
+            <div ref={githubRef}>
+              <Link href="/">
+                <a>
+                  <Image
+                    src={"/githubIcon.svg"}
+                    alt="hamburger icon"
+                    width={19}
+                    height={19}
+                    className="cursor-pointer z-50"
+                    onClick={alertHandler.bind(null, "not implemented")}
+                  />
+                </a>
+              </Link>
+            </div>
+            <div ref={linkedinRef}>
+              <Link href="/">
+                <a>
+                  <Image
+                    src={"/linkedinIcon.svg"}
+                    alt="hamburger icon"
+                    width={19}
+                    height={19}
+                    className="cursor-pointer z-50"
+                    onClick={alertHandler.bind(null, "not implemented")}
+                  />
+                </a>
+              </Link>
+            </div>
+          </div>
           <div
-            className="w-9 h-9 relative transition ease-out hover:scale-110"
+            className="w-9 h-9 absolute transition ease-out hover:scale-110 md:hover:scale-100 top-6 right-8 "
             onClick={toggleHamburgerIcon}
           >
             <div className="absolute top-0 left-0" ref={hamburgerIconRef1}>
@@ -75,7 +179,7 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
                 alt="hamburger icon"
                 width={35}
                 height={35}
-                className="cursor-pointer"
+                className="cursor-pointer md:cursor-default"
               />
             </div>
             <div className="absolute top-0 left-0" ref={hamburgerIconRef2}>
@@ -84,7 +188,7 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
                 alt="hamburger icon"
                 width={35}
                 height={35}
-                className="cursor-pointer"
+                className="cursor-pointer md:cursor-default"
               />
             </div>
           </div>

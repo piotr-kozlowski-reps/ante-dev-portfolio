@@ -9,11 +9,14 @@ import {
 import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
 import Navigation from "../Navigation";
+import EasePack from "gsap/dist/EasePack";
 
 interface Props {
   // children: React.ReactNode;
 }
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
+  const landingPageTl = gsap.timeline();
+
   // let hamburgerIconRef = useRef<HTMLDivElement>(null);
 
   // useEffect(() => {
@@ -39,12 +42,15 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
     <React.Fragment>
       {/* landingPage */}
       <div
-        style={{
-          backgroundImage: `url("/temporary-bg/iPhone14ProMax-1.jpg")`,
-        }}
+        // style={{
+        //   backgroundImage: `url("/temporary-bg/iPhone14ProMax-1.jpg")`,
+        // }}
+        // style={{
+        //   backgroundImage: `url("/temporary-bg/1440x1024.jpg")`,
+        // }}
         className="h-screen flex flex-col justify-between bg-background-1 bg-no-repeat bg-cover"
       >
-        <Navigation />
+        <Navigation timeline={landingPageTl} />
         <div className="flex justify-center items-center">
           {/* <ImageRevealing /> */}
         </div>

@@ -55,12 +55,18 @@ export function XIntoHamburgerAnimation(
 }
 
 /** Toggle HamburgerIcon <=> Separator  */
-
-const startRef1SeparatorState = { scaleY: 1, scaleX: 1, rotateZ: 0, x: 0 };
+const startRef1SeparatorState = {
+  scaleY: 1,
+  scaleX: 1,
+  rotateZ: 0,
+  x: 0,
+  y: 0,
+};
 const endRef1SeparatorState = {
-  x: -60,
+  x: -55,
+  y: -8,
   scaleY: 0.25,
-  scaleX: 1.1,
+  scaleX: 0.5,
   rotateZ: 90,
   ease: "Power4.easeOut",
   duration: 1,
@@ -84,4 +90,37 @@ export function separatorIntoHamburgerAnimation(
     endRef1SeparatorState,
     startRef1SeparatorState
   );
+}
+
+/** LandingPage timeline  */
+const staggerValue = 0.04;
+const durationValue = 0.4;
+const initialXValue = -100;
+
+export function revealingElementsAnimation(
+  refs: React.RefObject<HTMLElement>[],
+  timeline: gsap.core.Timeline,
+  delay: number
+) {
+  timeline.fromTo(
+    refs,
+    {
+      y: initialXValue,
+      autoAlpha: 0,
+    },
+    {
+      y: 0,
+      autoAlpha: 100,
+      stagger: staggerValue,
+      duration: durationValue,
+      ease: "Power4.easeOut",
+      delay: delay,
+    }
+  );
+
+  // gsap.fromTo(
+  //   [ref1.current, ref2.current],
+  //   endRef1SeparatorState,
+  //   startRef1SeparatorState
+  // );
 }
