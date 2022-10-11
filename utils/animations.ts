@@ -94,13 +94,14 @@ export function separatorIntoHamburgerAnimation(
 
 /** LandingPage timeline  */
 const staggerValue = 0.04;
-const durationValue = 0.4;
-const initialXValue = -100;
+// const durationValue = 0.8;
+const initialXValue = -150;
 
 export function revealingElementsAnimation(
-  refs: React.RefObject<HTMLElement>[],
+  refs: HTMLElement[],
   timeline: gsap.core.Timeline,
-  delay: number
+  delay: number,
+  durationValue: number
 ) {
   timeline.fromTo(
     refs,
@@ -113,14 +114,30 @@ export function revealingElementsAnimation(
       autoAlpha: 100,
       stagger: staggerValue,
       duration: durationValue,
-      ease: "Power4.easeOut",
+      ease: "power4.out",
       delay: delay,
     }
   );
-
-  // gsap.fromTo(
-  //   [ref1.current, ref2.current],
-  //   endRef1SeparatorState,
-  //   startRef1SeparatorState
-  // );
+}
+export function unRevealingElementsAnimation(
+  refs: HTMLElement[],
+  timeline: gsap.core.Timeline,
+  delay: number,
+  durationValue: number
+) {
+  timeline.fromTo(
+    refs,
+    {
+      y: 0,
+      autoAlpha: 100,
+    },
+    {
+      y: initialXValue,
+      autoAlpha: 0,
+      stagger: staggerValue,
+      duration: durationValue,
+      ease: "power4.out",
+      delay: delay,
+    }
+  );
 }

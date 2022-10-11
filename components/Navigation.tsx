@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 
 import {
   hamburgerIntoXAnimation,
@@ -8,6 +14,7 @@ import {
   hamburgerIntoSeparatorAnimation,
   separatorIntoHamburgerAnimation,
   revealingElementsAnimation,
+  unRevealingElementsAnimation,
 } from "../utils/animations";
 import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
@@ -30,13 +37,13 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   const [isSmallSizeWidth, setIsSmallSizeWidth] = useState(true);
   const [width, height] = useDeviceSize();
 
-  const menuLinks = [
-    homeRef.current,
-    aboutRef.current,
-    projectsRef.current,
-    contactRef.current,
+  const menuLinks: HTMLElement[] = [
+    homeRef.current!,
+    aboutRef.current!,
+    projectsRef.current!,
+    contactRef.current!,
   ];
-  const menuIcons = [githubRef.current, linkedinRef.current];
+  const menuIcons: HTMLElement[] = [githubRef.current!, linkedinRef.current!];
 
   ////logic
   function isLessThanOrEqualMdSize() {
@@ -64,23 +71,23 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   useEffect(() => {
     if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
       hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      // revealingElementsAnimation(menuLinks, timeline, 0.6);
-      // revealingElementsAnimation(menuIcons, timeline, 0);
+      revealingElementsAnimation(menuLinks, timeline, -0.3, 0.8);
+      revealingElementsAnimation(menuIcons, timeline, -0.7, 0.8);
       setIsSmallSizeWidth(false);
     }
     if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
       separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
+      unRevealingElementsAnimation(menuIcons.reverse(), timeline, 0, 2);
+      unRevealingElementsAnimation(menuLinks.reverse(), timeline, -2, 2);
       setIsSmallSizeWidth(true);
     }
-  }, [width, height, isSmallSizeWidth]);
+  }, [width, height, isSmallSizeWidth, isLessThanOrEqualMdSize, timeline]);
 
   /** Main timeline animation */
   useEffect(() => {
-    if (timeline && menuLinks && menuIcons) {
-      revealingElementsAnimation(menuLinks, timeline, 0.6);
-      revealingElementsAnimation(menuIcons, timeline, 0);
-    }
-  }, [timeline, revealingElementsAnimation]);
+    // revealingElementsAnimation(menuLinks, timeline, 0.3);
+    // revealingElementsAnimation(menuIcons, timeline, 0);
+  }, [timeline]);
 
   ////utils - later delete
   function alertHandler(message: string) {
@@ -98,12 +105,12 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
           <div className="absolute top-7 right-32" style={{ paddingTop: 1 }}>
             <ul className="uppercase text-xs font-quicksand font-semibold text-white flex gap-4 justify-end items-center">
               <li
-                className="cursor-pointer transition ease-out hover:scale-105"
+                className="cursor-pointer transition ease-out hover:scale-110"
                 ref={homeRef}
               >
                 <Link href={"/"}>
                   <span onClick={alertHandler.bind(null, "not implemented")}>
-                    home
+                    <span className="">home</span>
                   </span>
                 </Link>
               </li>
@@ -145,7 +152,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
                 <a>
                   <Image
                     src={"/githubIcon.svg"}
-                    alt="hamburger icon"
+                    alt="gitHubIcon"
                     width={19}
                     height={19}
                     className="cursor-pointer z-50"
@@ -159,7 +166,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
                 <a>
                   <Image
                     src={"/linkedinIcon.svg"}
-                    alt="hamburger icon"
+                    alt="linkedInIcon"
                     width={19}
                     height={19}
                     className="cursor-pointer z-50"

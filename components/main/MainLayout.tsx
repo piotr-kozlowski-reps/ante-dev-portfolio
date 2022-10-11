@@ -1,11 +1,6 @@
 import Image from "next/image";
 import React, { FunctionComponent, useEffect, useRef } from "react";
 
-import {
-  mouseOverHandler,
-  mouseOutHandler,
-  hamburgerIntoXAnimation,
-} from "../../utils/animations";
 import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
 import Navigation from "../Navigation";
