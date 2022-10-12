@@ -6,6 +6,8 @@ import React, {
   useRef,
   useState,
   useMemo,
+  useLayoutEffect,
+  useCallback,
 } from "react";
 
 import {
@@ -20,7 +22,7 @@ import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
 
 interface Props {
-  timeline: gsap.core.Timeline;
+  timeline: React.MutableRefObject<gsap.core.Timeline>;
   // children: React.ReactNode;
 }
 const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
@@ -37,18 +39,24 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   const [isSmallSizeWidth, setIsSmallSizeWidth] = useState(true);
   const [width, height] = useDeviceSize();
 
-  const menuLinks: HTMLElement[] = [
-    homeRef.current!,
-    aboutRef.current!,
-    projectsRef.current!,
-    contactRef.current!,
-  ];
-  const menuIcons: HTMLElement[] = [githubRef.current!, linkedinRef.current!];
+  const menuLinks: HTMLElement[] = useMemo(
+    () => [
+      homeRef.current!,
+      aboutRef.current!,
+      projectsRef.current!,
+      contactRef.current!,
+    ],
+    []
+  );
+  const menuIcons: HTMLElement[] = useMemo(
+    () => [githubRef.current!, linkedinRef.current!],
+    []
+  );
 
   ////logic
-  function isLessThanOrEqualMdSize() {
+  const isLessThanOrEqualMdSize = useCallback(() => {
     return width < 768 ? true : false;
-  }
+  }, [width]);
 
   /** Starting effect that hides clone od hamburger (clone that is used later for making "X" sign) */
   useEffect(() => {
@@ -71,23 +79,42 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   useEffect(() => {
     if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
       hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      revealingElementsAnimation(menuLinks, timeline, -0.3, 0.8);
-      revealingElementsAnimation(menuIcons, timeline, -0.7, 0.8);
+      revealingElementsAnimation(menuLinks, timeline.current, -0.3, 0.8);
+      revealingElementsAnimation(menuIcons, timeline.current, -0.7, 0.8);
       setIsSmallSizeWidth(false);
     }
     if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
       separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      unRevealingElementsAnimation(menuIcons.reverse(), timeline, 0, 2);
-      unRevealingElementsAnimation(menuLinks.reverse(), timeline, -2, 2);
+      unRevealingElementsAnimation(menuIcons.reverse(), timeline.current, 0, 2);
+      unRevealingElementsAnimation(
+        menuLinks.reverse(),
+        timeline.current,
+        -2,
+        2
+      );
       setIsSmallSizeWidth(true);
     }
-  }, [width, height, isSmallSizeWidth, isLessThanOrEqualMdSize, timeline]);
+  }, [
+    width,
+    height,
+    isSmallSizeWidth,
+    isLessThanOrEqualMdSize,
+    timeline,
+    menuLinks,
+    menuIcons,
+  ]);
 
   /** Main timeline animation */
-  useEffect(() => {
-    // revealingElementsAnimation(menuLinks, timeline, 0.3);
-    // revealingElementsAnimation(menuIcons, timeline, 0);
-  }, [timeline]);
+  // useEffect(() => {
+  //   if (width < 768 && menuIcons && menuLinks) {
+  //     // gsap.fromTo(menuIcons.reverse(), { y: 0 }, { y: -200 });
+
+  //     // unRevealingElementsAnimation(menuIcons.reverse(), timeline, 0, 2);
+  //     // unRevealingElementsAnimation(menuLinks.reverse(), timeline, -2, 2);
+  //   }
+  //   // revealingElementsAnimation(menuLinks, timeline, 0.3);
+  //   // revealingElementsAnimation(menuIcons, timeline, 0);
+  // }, [timeline, width, menuIcons, menuLinks]);
 
   ////utils - later delete
   function alertHandler(message: string) {
@@ -205,105 +232,3 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   );
 };
 export default Navigation;
-
-// import Head from "next/head";
-// import * as React from "react";
-// // @ts-ignore
-// import { Link } from "../../routes";
-// import "../../styles/theme.scss";
-
-// interface MainLayoutProps {
-//   children: React.ReactNode;
-// }
-
-// const MainLayout: React.SFC<MainLayoutProps> = (props: MainLayoutProps) => {
-//   const { children } = props;
-//   const color = "#EE2560";
-//   const production = process.env.NODE_ENV === "production";
-//   return (
-//     <div>
-//       <Head>
-//         <title>Next.js 5.0 w/ TypeScript</title>
-//         {production ? (
-//           <link rel="stylesheet" href="/_next/static/style.css" />
-//         ) : null}
-//       </Head>
-//       <h1>Next.js 5.0 w/ TypeScript</h1>
-//       <nav>
-//         <dl>
-//           <dt>
-//             <Link prefetch route="index">
-//               <a>Index</a>
-//             </Link>
-//           </dt>
-//           <dd>React Component Page</dd>
-//           <dt>
-//             <Link prefetch route="redux">
-//               <a>Redux</a>
-//             </Link>
-//           </dt>
-//           <dd>Redux Container Page</dd>
-//           <dt>
-//             <Link prefetch route="story" id="16311462">
-//               <a>Next.js 5.0 @ HN</a>
-//             </Link>
-//           </dt>
-//           <dd>Dynamic Routing Page w/ Redux</dd>
-//         </dl>
-//       </nav>
-//       <hr />
-//       {children}
-//       <style jsx>{`
-//         h1 {
-//           color: ${color};
-//         }
-//         nav {
-//           dd {
-//             font-size: 12px;
-//             margin-left: 0;
-//             margin-bottom: 0.5em;
-//           }
-//           padding-bottom: 0.25em;
-//         }
-//       `}</style>
-//     </div>
-//   );
-// };
-
-// export default MainLayout;
-
-// <div className="bg-slate-600 h-screen w-screen p-6 flex justify-evenly">
-//   {/* <div className="flex flex-col items-center justify-center"> */}
-//   <div className="flex flex-col justify-center items-center bg-red-600">
-//     {/* <div className="flex justify-between items-center w-full"> */}
-//     <div className="">
-//       <div className="">
-//         <p>logo</p>
-//       </div>
-//       <div>
-//         <ul className="flex justify-end gap-4 uppercase text-sm">
-//           <li>info</li>
-//           <li>portfolio</li>
-//           <li>kontakt</li>
-//         </ul>
-//       </div>
-//     </div>
-//     <div>
-//       <h1 className="text-5xl uppercase">MAIN TITLE</h1>
-//     </div>
-//     <div>
-//       <h3 className="text-2xl">medium title</h3>
-//     </div>
-//     <div>
-//       <p className="text-sm px-4">
-//         Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit
-//         architecto provident excepturi et iure aliquam consequuntur soluta
-//         molestias cupiditate labore.
-//       </p>
-//     </div>
-//   </div>
-//   {/* </div> */}
-// </div>;
-// {
-//   /* <ImageRevealing /> */
-// }

@@ -94,7 +94,6 @@ export function separatorIntoHamburgerAnimation(
 
 /** LandingPage timeline  */
 const staggerValue = 0.04;
-// const durationValue = 0.8;
 const initialXValue = -150;
 
 export function revealingElementsAnimation(

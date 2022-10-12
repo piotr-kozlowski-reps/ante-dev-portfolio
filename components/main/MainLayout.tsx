@@ -10,7 +10,7 @@ interface Props {
   // children: React.ReactNode;
 }
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
-  const landingPageTl = gsap.timeline();
+  const landingPageTl = useRef(gsap.timeline());
 
   // let hamburgerIconRef = useRef<HTMLDivElement>(null);
 
