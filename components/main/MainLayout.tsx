@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { FunctionComponent, useEffect, useRef } from "react";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
 import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
@@ -10,7 +10,8 @@ interface Props {
   // children: React.ReactNode;
 }
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
-  const landingPageTl = useRef(gsap.timeline());
+  const [landingPageTl, setLandingPageTl] = useState(() => gsap.timeline());
+  // const landingPageTl = useRef(gsap.timeline());
 
   // let hamburgerIconRef = useRef<HTMLDivElement>(null);
 
