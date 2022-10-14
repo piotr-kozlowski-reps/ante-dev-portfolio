@@ -18,6 +18,7 @@ import {
   separatorIntoHamburgerAnimation,
   revealingElementsAnimation,
   unRevealingElementsAnimation,
+  testFunc,
 } from "../utils/animations";
 import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
@@ -84,15 +85,15 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
       let mm = gsap.matchMedia();
       mm.add("(max-width: 768px)", () => {
         let tl = gsap.timeline();
-        tl.fromTo(githubRef.current, { y: 0 }, { y: 100 }).fromTo(
-          githubRef.current,
-          { scale: 1 },
-          {
-            scale: 1.5,
-          }
-        );
-        // gsap.to(githubRef.current, { y: 100 });
-        // revealingElementsAnimation(menuLinks, tl, -0.3, 0.8);
+        // tl.fromTo(githubRef.current, { y: 0 }, { y: 100 }).fromTo(
+        //   githubRef.current,
+        //   { scale: 1 },
+        //   {
+        //     scale: 1.5,
+        //   }
+        // );
+        revealingElementsAnimation(menuLinks, tl, -0.3, 0.8);
+        // testFunc([githubRef.current!], tl);
       });
       mm.add("(min-width: 769px)", () => {
         let tl = gsap.timeline();

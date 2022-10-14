@@ -104,7 +104,7 @@ export function revealingElementsAnimation(
 ) {
   console.log("revealingElementsAnimation");
 
-  tl.fromTo(
+  return tl.fromTo(
     refs,
     {
       y: initialXValue,
@@ -141,4 +141,8 @@ export function unRevealingElementsAnimation(
       delay: delay,
     }
   );
+}
+
+export function testFunc(refs: HTMLElement[], timeline: gsap.core.Timeline) {
+  return timeline.fromTo(refs, { y: 0 }, { y: 100 });
 }
