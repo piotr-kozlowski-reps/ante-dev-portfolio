@@ -25,7 +25,7 @@ interface Props {
   timeline: gsap.core.Timeline;
   // children: React.ReactNode;
 }
-const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
+const Navigation: FunctionComponent<Props> = (props: Props) => {
   ////vars
   const comp = useRef();
   let hamburgerIconRef1 = useRef<HTMLDivElement>(null);
@@ -39,6 +39,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   const [isHamburger, setIsHamburger] = useState(true);
   const [isSmallSizeWidth, setIsSmallSizeWidth] = useState(true);
   const [width, height] = useDeviceSize();
+  const tl: React.MutableRefObject<gsap.core.Timeline | undefined> = useRef();
 
   const menuLinks: HTMLElement[] = useMemo(
     () => [
@@ -89,13 +90,13 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
     }
     if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
       separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      // unRevealingElementsAnimation(menuIcons.reverse(), timeline.current, 0, 2);
-      // unRevealingElementsAnimation(
-      //   menuLinks.reverse(),
-      //   timeline.current,
-      //   -2,
-      //   2
-      // );
+      // // unRevealingElementsAnimation(menuIcons.reverse(), 0, 2);
+      // // unRevealingElementsAnimation(
+      // //   menuLinks.reverse(),
+      // //   timeline.current,
+      // //   -2,
+      // //   2
+      // // );
       setIsSmallSizeWidth(true);
     }
   }, [
@@ -103,7 +104,6 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
     height,
     isSmallSizeWidth,
     isLessThanOrEqualMdSize,
-    timeline,
     menuLinks,
     menuIcons,
   ]);
@@ -129,11 +129,18 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   return (
     <React.Fragment>
       <div className="relative">
-        <div className="bg-red-500 p-2 absolute top-6 left-6">
-          <p>logo</p>
+        <div className="absolute top-6 left-6">
+          <img
+            src={"/logo2.svg"}
+            alt="piotr kozłowski portfolio logo"
+            className="w-32"
+          />
         </div>
         <div>
-          <div className="absolute top-7 right-32" style={{ paddingTop: 1 }}>
+          <div
+            className="absolute top-7 right-32 py-px"
+            // style={{ paddingTop: 1 }}
+          >
             <ul className="uppercase text-xs font-quicksand font-semibold text-white flex gap-4 justify-end items-center">
               <li
                 className="cursor-pointer transition ease-out hover:scale-110"

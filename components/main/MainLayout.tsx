@@ -5,34 +5,27 @@ import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
 import Navigation from "../Navigation";
 import EasePack from "gsap/dist/EasePack";
+import useDeviceSize from "../../hooks/useDeviceSize";
 
 interface Props {
   // children: React.ReactNode;
 }
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
-  const [landingPageTl, setLandingPageTl] = useState(() => gsap.timeline());
+  const mouseRef = useRef(null);
+  const [width, height] = useDeviceSize();
   // const landingPageTl = useRef(gsap.timeline());
 
-  // let hamburgerIconRef = useRef<HTMLDivElement>(null);
-
-  // useEffect(() => {
-  //   console.log(hamburgerIconRef);
-
-  // hamburgerIntoXAnimation.bind(null, hamburgerIconRef);
-  //   gsap.fromTo(
-  //     hamburgerIconRef.current,
-  //     { scaleY: 1, scaleX: 1, rotateZ: 0 },
-  //     {
-  //       // scaleY: 10,
-  //       // scaleX: 10,
-  //       scaleY: 0.25,
-  //       scaleX: 1.1,
-  //       rotateZ: 45,
-  //       // ease: Power4.easeOut,
-  //       duration: 0.4,
-  //     }
-  //   );
-  // }, [hamburgerIconRef]);
+  useEffect(() => {
+    gsap.from(mouseRef.current, {
+      y: -3,
+      autoAlpha: 0.8,
+      scale: 0.99,
+      duration: 0.6,
+      repeat: -1,
+      yoyo: true,
+      yoyoEase: "power2.out",
+    });
+  }, [mouseRef]);
 
   return (
     <React.Fragment>
@@ -41,16 +34,44 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
         // style={{
         //   backgroundImage: `url("/temporary-bg/iPhone14ProMax-1.jpg")`,
         // }}
-        // style={{
-        //   backgroundImage: `url("/temporary-bg/1440x1024.jpg")`,
-        // }}
-        className="h-screen flex flex-col justify-between bg-background-1 bg-no-repeat bg-cover"
+
+        style={{
+          backgroundImage: `url("/temporary-bg/bg-landing-page.jpg")`,
+        }}
+        className="h-screen flex flex-col justify-between bg-background-1 bg-no-repeat bg-cover bg-center"
       >
-        <Navigation timeline={landingPageTl} />
+        <Navigation timeline={} />
         <div className="flex justify-center items-center">
           {/* <ImageRevealing /> */}
         </div>
-        <div className="flex justify-center uppercase bg-background-1">VV</div>
+        <div className="relative bg-background-1">
+          <img
+            src="/landingPageFooter.svg"
+            className="w-full absolute bottom-0"
+          />
+          <div
+            className="absolute bottom-2 flex justify-center items-center w-full"
+            ref={mouseRef}
+          >
+            {width < 768 ? (
+              <Image
+                src={"/oneFingerScroll.svg"}
+                alt="Scroll, please"
+                width={30}
+                height={30}
+                className="cursor-pointer md:cursor-default"
+              />
+            ) : (
+              <Image
+                src={"/mouse.svg"}
+                alt="Scroll, please"
+                width={35}
+                height={35}
+                className="cursor-pointer md:cursor-default"
+              />
+            )}
+          </div>
+        </div>
       </div>
       <div className="text-5xl">
         <p>

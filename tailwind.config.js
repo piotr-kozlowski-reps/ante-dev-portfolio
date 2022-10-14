@@ -10,7 +10,7 @@ module.exports = {
         quicksand: ["Quicksand", "sans-serif"],
       },
       colors: {
-        "background-1": "#26292E",
+        "background-1": "#2c2f36",
       },
     },
   },

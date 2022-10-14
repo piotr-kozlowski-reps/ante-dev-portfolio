@@ -98,11 +98,13 @@ const initialXValue = -150;
 
 export function revealingElementsAnimation(
   refs: HTMLElement[],
-  timeline: gsap.core.Timeline,
+  tl: gsap.core.Timeline,
   delay: number,
   durationValue: number
 ) {
-  timeline.fromTo(
+  console.log("revealingElementsAnimation");
+
+  tl.fromTo(
     refs,
     {
       y: initialXValue,
