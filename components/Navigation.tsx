@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useLayoutEffect,
   useCallback,
+  createContext,
 } from "react";
 
 import {
@@ -22,7 +23,7 @@ import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
 
 interface Props {
-  timeline: React.MutableRefObject<gsap.core.Timeline>;
+  // timeline: React.MutableRefObject<gsap.core.Timeline>;
   // children: React.ReactNode;
 }
 const Navigation: FunctionComponent<Props> = (props: Props) => {
@@ -38,7 +39,8 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
   const [isHamburger, setIsHamburger] = useState(true);
   const [isSmallSizeWidth, setIsSmallSizeWidth] = useState(true);
   const [width, height] = useDeviceSize();
-  const tl: React.MutableRefObject<gsap.core.Timeline | undefined> = useRef();
+  // const tl: React.MutableRefObject<gsap.core.Timeline | undefined> = useRef();
+  // const [tl, setTl] = useState(() => gsap.timeline());
 
   const menuLinks: HTMLElement[] = useMemo(
     () => [
@@ -60,9 +62,9 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
   }, [width]);
 
   /** Starting effect that hides clone od hamburger (clone that is used later for making "X" sign) */
-  useEffect(() => {
-    gsap.to(hamburgerIconRef2.current, { autoAlpha: 0 });
-  }, [hamburgerIconRef2]);
+  // useEffect(() => {
+  //   gsap.to(hamburgerIconRef2.current, { autoAlpha: 0 });
+  // }, [hamburgerIconRef2]);
 
   /** Toggling HamburgerIcon and "X" */
   function toggleHamburgerIcon() {
@@ -78,31 +80,63 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
 
   /** Triggering animation of Hamburger Icon when media query changes */
   useEffect(() => {
-    if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
-      hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      revealingElementsAnimation(menuLinks, timeline.current, -0.3, 0.8);
-      revealingElementsAnimation(menuIcons, timeline.current, -0.7, 0.8);
-      setIsSmallSizeWidth(false);
-    }
-    if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
-      separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      // // unRevealingElementsAnimation(menuIcons.reverse(), 0, 2);
-      // // unRevealingElementsAnimation(
-      // //   menuLinks.reverse(),
-      // //   timeline.current,
-      // //   -2,
-      // //   2
-      // // );
-      setIsSmallSizeWidth(true);
-    }
-  }, [
-    width,
-    height,
-    isSmallSizeWidth,
-    isLessThanOrEqualMdSize,
-    menuLinks,
-    menuIcons,
-  ]);
+    const ctx = gsap.context(() => {
+      let mm = gsap.matchMedia();
+      mm.add("(max-width: 768px)", () => {
+        let tl = gsap.timeline();
+        tl.fromTo(githubRef.current, { y: 0 }, { y: 100 }).fromTo(
+          githubRef.current,
+          { scale: 1 },
+          {
+            scale: 1.5,
+          }
+        );
+        // gsap.to(githubRef.current, { y: 100 });
+        // revealingElementsAnimation(menuLinks, tl, -0.3, 0.8);
+      });
+      mm.add("(min-width: 769px)", () => {
+        let tl = gsap.timeline();
+        tl.fromTo(
+          githubRef.current,
+          { scale: 1.5 },
+          {
+            scale: 1,
+          }
+        ).fromTo(githubRef.current, { y: 100 }, { y: 0 });
+        // gsap.to(githubRef.current, { y: 100 });
+        // revealingElementsAnimation(menuLinks, tl, -0.3, 0.8);
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // useEffect(() => {
+  //   if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
+  //     hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
+  //     // revealingElementsAnimation(menuLinks, timeline.current, -0.3, 0.8);
+  //     // revealingElementsAnimation(menuIcons, timeline.current, -0.7, 0.8);
+  //     setIsSmallSizeWidth(false);
+  //   }
+  //   if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
+  //     separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
+  //     // // unRevealingElementsAnimation(menuIcons.reverse(), 0, 2);
+  //     // // unRevealingElementsAnimation(
+  //     // //   menuLinks.reverse(),
+  //     // //   timeline.current,
+  //     // //   -2,
+  //     // //   2
+  //     // // );
+  //     setIsSmallSizeWidth(true);
+  //   }
+  // }, [
+  //   width,
+  //   height,
+  //   isSmallSizeWidth,
+  //   isLessThanOrEqualMdSize,
+  //   menuLinks,
+  //   menuIcons,
+  // ]);
 
   /** Main timeline animation */
   // useEffect(() => {

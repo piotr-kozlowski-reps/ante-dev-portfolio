@@ -4,27 +4,31 @@ import React, { FunctionComponent, useEffect, useRef } from "react";
 import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
 import Navigation from "../Navigation";
-import EasePack from "gsap/dist/EasePack";
 import useDeviceSize from "../../hooks/useDeviceSize";
 
 interface Props {
   // children: React.ReactNode;
 }
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
+  const comp = useRef();
   const mouseRef = useRef(null);
   const [width, height] = useDeviceSize();
-  // const landingPageTl = useRef(gsap.timeline());
 
   useEffect(() => {
-    gsap.from(mouseRef.current, {
-      y: -3,
-      autoAlpha: 0.8,
-      scale: 0.99,
-      duration: 0.6,
-      repeat: -1,
-      yoyo: true,
-      yoyoEase: "power2.out",
+    const ctx = gsap.context(() => {
+      gsap.from(mouseRef.current, {
+        y: -3,
+        autoAlpha: 0.8,
+        scale: 0.99,
+        duration: 0.6,
+        repeat: -1,
+        yoyo: true,
+        yoyoEase: "power4.in",
+      });
     });
+    return () => {
+      ctx.revert();
+    };
   }, [mouseRef]);
 
   return (
@@ -40,7 +44,7 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
         }}
         className="h-screen flex flex-col justify-between bg-background-1 bg-no-repeat bg-cover bg-center"
       >
-        <Navigation timeline={} />
+        <Navigation />
         <div className="flex justify-center items-center">
           {/* <ImageRevealing /> */}
         </div>
