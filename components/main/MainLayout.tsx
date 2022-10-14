@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import React, { FunctionComponent, useEffect, useRef } from "react";
 
 import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";

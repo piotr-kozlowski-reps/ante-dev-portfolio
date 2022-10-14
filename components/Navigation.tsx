@@ -22,12 +22,11 @@ import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
 
 interface Props {
-  timeline: gsap.core.Timeline;
+  timeline: React.MutableRefObject<gsap.core.Timeline>;
   // children: React.ReactNode;
 }
 const Navigation: FunctionComponent<Props> = (props: Props) => {
   ////vars
-  const comp = useRef();
   let hamburgerIconRef1 = useRef<HTMLDivElement>(null);
   let hamburgerIconRef2 = useRef<HTMLDivElement>(null);
   let homeRef = useRef<HTMLLIElement>(null);
@@ -60,12 +59,9 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
     return width < 768 ? true : false;
   }, [width]);
 
-  /** Starting effect that hides clone of hamburger (clone that is used later for making "X" sign) */
+  /** Starting effect that hides clone od hamburger (clone that is used later for making "X" sign) */
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      gsap.to(hamburgerIconRef2.current, { autoAlpha: 0 });
-    }, comp);
-    return () => ctx.revert();
+    gsap.to(hamburgerIconRef2.current, { autoAlpha: 0 });
   }, [hamburgerIconRef2]);
 
   /** Toggling HamburgerIcon and "X" */
@@ -84,9 +80,9 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
   useEffect(() => {
     if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
       hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
-      // revealingElementsAnimation(menuLinks, timeline.current, -0.3, 0.8);
-      // revealingElementsAnimation(menuIcons, timeline.current, -0.7, 0.8);
-      // setIsSmallSizeWidth(false);
+      revealingElementsAnimation(menuLinks, timeline.current, -0.3, 0.8);
+      revealingElementsAnimation(menuIcons, timeline.current, -0.7, 0.8);
+      setIsSmallSizeWidth(false);
     }
     if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
       separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
