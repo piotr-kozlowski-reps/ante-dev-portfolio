@@ -5,10 +5,7 @@ import React, {
   useEffect,
   useRef,
   useState,
-  useMemo,
-  useLayoutEffect,
   useCallback,
-  createContext,
 } from "react";
 
 import {
@@ -16,18 +13,19 @@ import {
   XIntoHamburgerAnimation,
   hamburgerIntoSeparatorAnimation,
   separatorIntoHamburgerAnimation,
-  revealingElementsAnimation,
-  unRevealingElementsAnimation,
-  testFunc,
+  revealElementsInYAnimation,
+  hideElementsInYAnimation,
+  mouseEventsAnimationHandler,
+  fullyCustomizableAnimationWithPassedTimeline,
 } from "../utils/animations";
 import { gsap } from "gsap/dist/gsap";
 import useDeviceSize from "../hooks/useDeviceSize";
 
 interface Props {
-  // timeline: React.MutableRefObject<gsap.core.Timeline>;
+  timeline: gsap.core.Timeline;
   // children: React.ReactNode;
 }
-const Navigation: FunctionComponent<Props> = (props: Props) => {
+const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   ////vars
   let hamburgerIconRef1 = useRef<HTMLDivElement>(null);
   let hamburgerIconRef2 = useRef<HTMLDivElement>(null);
@@ -37,25 +35,9 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
   let contactRef = useRef<HTMLLIElement>(null);
   let githubRef = useRef<HTMLDivElement>(null);
   let linkedinRef = useRef<HTMLDivElement>(null);
+  let logoRef = useRef<HTMLDivElement>(null);
   const [isHamburger, setIsHamburger] = useState(true);
-  const [isSmallSizeWidth, setIsSmallSizeWidth] = useState(true);
   const [width, height] = useDeviceSize();
-  // const tl: React.MutableRefObject<gsap.core.Timeline | undefined> = useRef();
-  // const [tl, setTl] = useState(() => gsap.timeline());
-
-  const menuLinks: HTMLElement[] = useMemo(
-    () => [
-      homeRef.current!,
-      aboutRef.current!,
-      projectsRef.current!,
-      contactRef.current!,
-    ],
-    []
-  );
-  const menuIcons: HTMLElement[] = useMemo(
-    () => [githubRef.current!, linkedinRef.current!],
-    []
-  );
 
   ////logic
   const isLessThanOrEqualMdSize = useCallback(() => {
@@ -84,74 +66,63 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
     const ctx = gsap.context(() => {
       let mm = gsap.matchMedia();
       mm.add("(max-width: 768px)", () => {
-        let tl = gsap.timeline();
-        // tl.fromTo(githubRef.current, { y: 0 }, { y: 100 }).fromTo(
-        //   githubRef.current,
-        //   { scale: 1 },
-        //   {
-        //     scale: 1.5,
-        //   }
-        // );
-        revealingElementsAnimation(menuLinks, tl, -0.3, 0.8);
-        // testFunc([githubRef.current!], tl);
+        separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
+        hideElementsInYAnimation(
+          [
+            homeRef.current!,
+            aboutRef.current!,
+            projectsRef.current!,
+            contactRef.current!,
+            githubRef.current!,
+            linkedinRef.current!,
+          ].reverse(),
+          0,
+          1.5,
+          0.04,
+          0,
+          -60
+        );
       });
       mm.add("(min-width: 769px)", () => {
-        let tl = gsap.timeline();
-        tl.fromTo(
-          githubRef.current,
-          { scale: 1.5 },
-          {
-            scale: 1,
-          }
-        ).fromTo(githubRef.current, { y: 100 }, { y: 0 });
-        // gsap.to(githubRef.current, { y: 100 });
-        // revealingElementsAnimation(menuLinks, tl, -0.3, 0.8);
+        hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
+        revealElementsInYAnimation(
+          [
+            homeRef.current!,
+            aboutRef.current!,
+            projectsRef.current!,
+            contactRef.current!,
+            githubRef.current!,
+            linkedinRef.current!,
+          ],
+          0,
+          0.8,
+          0.04,
+          -60,
+          0
+        );
       });
     });
 
     return () => ctx.revert();
   }, []);
 
-  // useEffect(() => {
-  //   if (isSmallSizeWidth && !isLessThanOrEqualMdSize()) {
-  //     hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
-  //     // revealingElementsAnimation(menuLinks, timeline.current, -0.3, 0.8);
-  //     // revealingElementsAnimation(menuIcons, timeline.current, -0.7, 0.8);
-  //     setIsSmallSizeWidth(false);
-  //   }
-  //   if (!isSmallSizeWidth && isLessThanOrEqualMdSize()) {
-  //     separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
-  //     // // unRevealingElementsAnimation(menuIcons.reverse(), 0, 2);
-  //     // // unRevealingElementsAnimation(
-  //     // //   menuLinks.reverse(),
-  //     // //   timeline.current,
-  //     // //   -2,
-  //     // //   2
-  //     // // );
-  //     setIsSmallSizeWidth(true);
-  //   }
-  // }, [
-  //   width,
-  //   height,
-  //   isSmallSizeWidth,
-  //   isLessThanOrEqualMdSize,
-  //   menuLinks,
-  //   menuIcons,
-  // ]);
-
   /** Main timeline animation */
-  // useEffect(() => {
-  //   if (width < 768 && menuIcons && menuLinks) {
-  //     // gsap.fromTo(menuIcons.reverse(), { y: 0 }, { y: -200 });
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      fullyCustomizableAnimationWithPassedTimeline(
+        [logoRef.current!],
+        timeline,
+        { x: -200, autoAlpha: 0 },
+        { x: 0, autoAlpha: 1, duration: 0.3, delay: 0.3 }
+      );
+    });
 
-  //     // unRevealingElementsAnimation(menuIcons.reverse(), timeline, 0, 2);
-  //     // unRevealingElementsAnimation(menuLinks.reverse(), timeline, -2, 2);
-  //   }
-  //   // revealingElementsAnimation(menuLinks, timeline, 0.3);
-  //   // revealingElementsAnimation(menuIcons, timeline, 0);
-  // }, [timeline, width, menuIcons, menuLinks]);
+    return () => {
+      ctx.revert();
+    };
+  }, [timeline]);
 
-  ////utils - later delete
+  ////utils - delete later
   function alertHandler(message: string) {
     alert(message);
   }
@@ -160,7 +131,7 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
   return (
     <React.Fragment>
       <div className="relative">
-        <div className="absolute top-6 left-6">
+        <div className="absolute top-6 left-6" ref={logoRef}>
           <img
             src={"/logo2.svg"}
             alt="piotr kozłowski portfolio logo"
@@ -176,6 +147,20 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
               <li
                 className="cursor-pointer transition ease-out hover:scale-110"
                 ref={homeRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  homeRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  homeRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
               >
                 <Link href={"/"}>
                   <span onClick={alertHandler.bind(null, "not implemented")}>
@@ -186,6 +171,20 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
               <li
                 className="cursor-pointer transition ease-out hover:scale-105"
                 ref={aboutRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  aboutRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  aboutRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
               >
                 <Link href={"/"}>
                   <span onClick={alertHandler.bind(null, "not implemented")}>
@@ -196,6 +195,20 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
               <li
                 className="cursor-pointer transition ease-out hover:scale-105"
                 ref={projectsRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  projectsRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  projectsRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
               >
                 <Link href={"/"}>
                   <span onClick={alertHandler.bind(null, "not implemented")}>
@@ -206,6 +219,20 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
               <li
                 className="cursor-pointer transition ease-out hover:scale-105"
                 ref={contactRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  contactRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  contactRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
               >
                 <Link href={"/"}>
                   <span onClick={alertHandler.bind(null, "not implemented")}>
@@ -216,7 +243,24 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
             </ul>
           </div>
           <div className="absolute top-7 right-7 flex justify-end items-center gap-4">
-            <div ref={githubRef}>
+            <div
+              ref={githubRef}
+              className="cursor-pointer z-50"
+              onMouseEnter={mouseEventsAnimationHandler.bind(
+                null,
+                githubRef,
+                1,
+                1.1,
+                0.3
+              )}
+              onMouseLeave={mouseEventsAnimationHandler.bind(
+                null,
+                githubRef,
+                1.1,
+                1,
+                0.3
+              )}
+            >
               <Link href="/">
                 <a>
                   <Image
@@ -224,13 +268,29 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
                     alt="gitHubIcon"
                     width={19}
                     height={19}
-                    className="cursor-pointer z-50"
                     onClick={alertHandler.bind(null, "not implemented")}
                   />
                 </a>
               </Link>
             </div>
-            <div ref={linkedinRef}>
+            <div
+              ref={linkedinRef}
+              className="cursor-pointer z-50"
+              onMouseEnter={mouseEventsAnimationHandler.bind(
+                null,
+                linkedinRef,
+                1,
+                1.1,
+                0.3
+              )}
+              onMouseLeave={mouseEventsAnimationHandler.bind(
+                null,
+                linkedinRef,
+                1.1,
+                1,
+                0.3
+              )}
+            >
               <Link href="/">
                 <a>
                   <Image
@@ -238,7 +298,6 @@ const Navigation: FunctionComponent<Props> = (props: Props) => {
                     alt="linkedInIcon"
                     width={19}
                     height={19}
-                    className="cursor-pointer z-50"
                     onClick={alertHandler.bind(null, "not implemented")}
                   />
                 </a>

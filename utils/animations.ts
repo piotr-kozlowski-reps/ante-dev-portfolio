@@ -1,22 +1,26 @@
-import { Power4 } from "gsap";
 import { gsap } from "gsap/dist/gsap";
 
-const powerValue: gsap.EaseFunction = Power4.easeOut;
-const scale = 1.2;
-const duration = 0.3;
-
-// export function mouseOverHandler(ref: React.RefObject<HTMLElement>) {
-//   gsap.to(ref.current, {
-//     scale: scale,
-//     ease: powerValue,
-//     duration: duration,
-//   });
-// }
+export function mouseEventsAnimationHandler(
+  ref: React.RefObject<HTMLElement>,
+  initialScale: number,
+  endScale: number,
+  duration: number
+) {
+  gsap.fromTo(
+    ref.current,
+    { scale: initialScale },
+    {
+      scale: endScale,
+      ease: "Power4.easeOut",
+      duration: duration,
+    }
+  );
+}
 
 // export function mouseOutHandler(ref: React.RefObject<HTMLElement>) {
 //   gsap.to(ref.current, {
 //     scale: 1,
-//     ease: powerValue,
+//     ease: "Power4.easeOut",
 //     duration: duration,
 //   });
 // }
@@ -93,25 +97,22 @@ export function separatorIntoHamburgerAnimation(
 }
 
 /** LandingPage timeline  */
-const staggerValue = 0.04;
-const initialXValue = -150;
-
-export function revealingElementsAnimation(
+export function revealElementsInYAnimation(
   refs: HTMLElement[],
-  tl: gsap.core.Timeline,
   delay: number,
-  durationValue: number
+  durationValue: number,
+  staggerValue: number,
+  initialYValue: number,
+  endYValue: number
 ) {
-  console.log("revealingElementsAnimation");
-
-  return tl.fromTo(
+  return gsap.fromTo(
     refs,
     {
-      y: initialXValue,
+      y: initialYValue,
       autoAlpha: 0,
     },
     {
-      y: 0,
+      y: endYValue,
       autoAlpha: 100,
       stagger: staggerValue,
       duration: durationValue,
@@ -120,29 +121,43 @@ export function revealingElementsAnimation(
     }
   );
 }
-export function unRevealingElementsAnimation(
+
+export function hideElementsInYAnimation(
+  refs: HTMLElement[],
+  delay: number,
+  durationValue: number,
+  staggerValue: number,
+  initialXValue: number,
+  endXValue: number
+) {
+  return gsap.fromTo(
+    refs,
+    {
+      y: initialXValue,
+      autoAlpha: 100,
+    },
+    {
+      y: endXValue,
+      autoAlpha: 0,
+      stagger: staggerValue,
+      duration: durationValue,
+      ease: "power4.out",
+      delay: delay,
+    }
+  );
+}
+
+export function fullyCustomizableAnimationWithPassedTimeline(
   refs: HTMLElement[],
   timeline: gsap.core.Timeline,
-  delay: number,
-  durationValue: number
+  initialAnimationObject: gsap.TweenVars,
+  endAnimationObject: gsap.TweenVars
 ) {
-  timeline.fromTo(
+  return timeline.fromTo(
     refs,
+    { ...initialAnimationObject },
     {
-      y: 0,
-      autoAlpha: 100,
-    },
-    {
-      y: initialXValue,
-      autoAlpha: 0,
-      stagger: staggerValue,
-      duration: durationValue,
-      ease: "power4.out",
-      delay: delay,
+      ...endAnimationObject,
     }
   );
-}
-
-export function testFunc(refs: HTMLElement[], timeline: gsap.core.Timeline) {
-  return timeline.fromTo(refs, { y: 0 }, { y: 100 });
 }

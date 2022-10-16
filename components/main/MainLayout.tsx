@@ -1,10 +1,11 @@
 import Image from "next/image";
-import React, { FunctionComponent, useEffect, useRef } from "react";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
 import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
 import Navigation from "../Navigation";
 import useDeviceSize from "../../hooks/useDeviceSize";
+import { fullyCustomizableAnimationWithPassedTimeline } from "../../utils/animations";
 
 interface Props {
   // children: React.ReactNode;
@@ -12,13 +13,31 @@ interface Props {
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
   const comp = useRef();
   const mouseRef = useRef(null);
+  const mainContainerRef = useRef(null);
+  const footerBackgroundRef = useRef(null);
   const [width, height] = useDeviceSize();
+  const [tl, setTl] = useState(() => gsap.timeline());
 
+  /** Main timeline */
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      tl.fromTo(
+        mainContainerRef.current!,
+        { alpha: 0, x: "-10%" },
+        { alpha: 1, x: 0, duration: 0.4 }
+      );
+    });
+    return () => {
+      ctx.revert();
+    };
+  }, [mouseRef, tl]);
+
+  /** Mouse teasing animation */
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(mouseRef.current, {
         y: -3,
-        autoAlpha: 0.8,
+        autoAlpha: 0.4,
         scale: 0.99,
         duration: 0.6,
         repeat: -1,
@@ -31,6 +50,52 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
     };
   }, [mouseRef]);
 
+  /** Footer scale in SM*/
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      let mm = gsap.matchMedia();
+      mm.add("(max-width: 768px)", () => {
+        gsap.fromTo(footerBackgroundRef.current, { x: 0 }, { x: -50 }); //TODO: popraw animacje
+        // separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
+        // hideElementsInYAnimation(
+        //   [
+        //     homeRef.current!,
+        //     aboutRef.current!,
+        //     projectsRef.current!,
+        //     contactRef.current!,
+        //     githubRef.current!,
+        //     linkedinRef.current!,
+        //   ].reverse(),
+        //   0,
+        //   1.5,
+        //   0.04,
+        //   0,
+        //   -60
+        // );
+      });
+      mm.add("(min-width: 769px)", () => {
+        // hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
+        // revealElementsInYAnimation(
+        //   [
+        //     homeRef.current!,
+        //     aboutRef.current!,
+        //     projectsRef.current!,
+        //     contactRef.current!,
+        //     githubRef.current!,
+        //     linkedinRef.current!,
+        //   ],
+        //   0,
+        //   0.8,
+        //   0.04,
+        //   -60,
+        //   0
+        // );
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <React.Fragment>
       {/* landingPage */}
@@ -38,21 +103,23 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
         // style={{
         //   backgroundImage: `url("/temporary-bg/iPhone14ProMax-1.jpg")`,
         // }}
-
-        style={{
-          backgroundImage: `url("/temporary-bg/bg-landing-page.jpg")`,
-        }}
-        className="h-screen flex flex-col justify-between bg-background-1 bg-no-repeat bg-cover bg-center"
+        className="h-screen flex flex-col justify-between bg-background-1  relative"
       >
-        <Navigation />
+        <div
+          className="absolute h-screen bg-no-repeat bg-cover bg-center top-0 left-0 right-0 bottom-0"
+          style={{
+            backgroundImage: `url("/temporary-bg/bg-landing-page.jpg")`,
+          }}
+          ref={mainContainerRef}
+        ></div>
+        <Navigation timeline={tl} />
         <div className="flex justify-center items-center">
           {/* <ImageRevealing /> */}
         </div>
         <div className="relative bg-background-1">
-          <img
-            src="/landingPageFooter.svg"
-            className="w-full absolute bottom-0"
-          />
+          <div className="w-full absolute -bottom-1" ref={footerBackgroundRef}>
+            <img src="/landingPageFooter.svg" className="w-full" />
+          </div>
           <div
             className="absolute bottom-2 flex justify-center items-center w-full"
             ref={mouseRef}
@@ -77,7 +144,7 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
           </div>
         </div>
       </div>
-      <div className="text-5xl">
+      <div className="text-5xl bg-background-2">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae
           at natus consectetur facere cupiditate commodi dolorem voluptatum
@@ -144,105 +211,3 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
   );
 };
 export default MainLayout;
-
-// import Head from "next/head";
-// import * as React from "react";
-// // @ts-ignore
-// import { Link } from "../../routes";
-// import "../../styles/theme.scss";
-
-// interface MainLayoutProps {
-//   children: React.ReactNode;
-// }
-
-// const MainLayout: React.SFC<MainLayoutProps> = (props: MainLayoutProps) => {
-//   const { children } = props;
-//   const color = "#EE2560";
-//   const production = process.env.NODE_ENV === "production";
-//   return (
-//     <div>
-//       <Head>
-//         <title>Next.js 5.0 w/ TypeScript</title>
-//         {production ? (
-//           <link rel="stylesheet" href="/_next/static/style.css" />
-//         ) : null}
-//       </Head>
-//       <h1>Next.js 5.0 w/ TypeScript</h1>
-//       <nav>
-//         <dl>
-//           <dt>
-//             <Link prefetch route="index">
-//               <a>Index</a>
-//             </Link>
-//           </dt>
-//           <dd>React Component Page</dd>
-//           <dt>
-//             <Link prefetch route="redux">
-//               <a>Redux</a>
-//             </Link>
-//           </dt>
-//           <dd>Redux Container Page</dd>
-//           <dt>
-//             <Link prefetch route="story" id="16311462">
-//               <a>Next.js 5.0 @ HN</a>
-//             </Link>
-//           </dt>
-//           <dd>Dynamic Routing Page w/ Redux</dd>
-//         </dl>
-//       </nav>
-//       <hr />
-//       {children}
-//       <style jsx>{`
-//         h1 {
-//           color: ${color};
-//         }
-//         nav {
-//           dd {
-//             font-size: 12px;
-//             margin-left: 0;
-//             margin-bottom: 0.5em;
-//           }
-//           padding-bottom: 0.25em;
-//         }
-//       `}</style>
-//     </div>
-//   );
-// };
-
-// export default MainLayout;
-
-// <div className="bg-slate-600 h-screen w-screen p-6 flex justify-evenly">
-//   {/* <div className="flex flex-col items-center justify-center"> */}
-//   <div className="flex flex-col justify-center items-center bg-red-600">
-//     {/* <div className="flex justify-between items-center w-full"> */}
-//     <div className="">
-//       <div className="">
-//         <p>logo</p>
-//       </div>
-//       <div>
-//         <ul className="flex justify-end gap-4 uppercase text-sm">
-//           <li>info</li>
-//           <li>portfolio</li>
-//           <li>kontakt</li>
-//         </ul>
-//       </div>
-//     </div>
-//     <div>
-//       <h1 className="text-5xl uppercase">MAIN TITLE</h1>
-//     </div>
-//     <div>
-//       <h3 className="text-2xl">medium title</h3>
-//     </div>
-//     <div>
-//       <p className="text-sm px-4">
-//         Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit
-//         architecto provident excepturi et iure aliquam consequuntur soluta
-//         molestias cupiditate labore.
-//       </p>
-//     </div>
-//   </div>
-//   {/* </div> */}
-// </div>;
-// {
-//   /* <ImageRevealing /> */
-// }

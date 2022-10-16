@@ -11,6 +11,7 @@ module.exports = {
       },
       colors: {
         "background-1": "#2c2f36",
+        "background-2": "#26292E",
       },
     },
   },
