@@ -13,7 +13,13 @@ module.exports = {
         "background-1": "#2c2f36",
         "background-2": "#26292E",
       },
+      clipPath: {
+        footerStartStatePath:
+          "polygon(65% 100%, 100% 100%, 100% 100%, 0% 100%, 0% 100%)",
+        mobileNavigationStartPath:
+          "polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 70%);",
+      },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-clip-path")],
 };

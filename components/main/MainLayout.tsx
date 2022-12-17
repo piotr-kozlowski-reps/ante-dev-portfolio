@@ -5,16 +5,15 @@ import ImageRevealing from "./ImageRevealing";
 import { gsap } from "gsap/dist/gsap";
 import Navigation from "../Navigation";
 import useDeviceSize from "../../hooks/useDeviceSize";
-import { fullyCustomizableAnimationWithPassedTimeline } from "../../utils/animations";
 
 interface Props {
   // children: React.ReactNode;
 }
 const MainLayout: FunctionComponent<Props> = (props: Props) => {
-  const comp = useRef();
   const mouseRef = useRef(null);
-  const mainContainerRef = useRef(null);
-  const footerBackgroundRef = useRef(null);
+  const mainContainerRef = useRef<HTMLDivElement>(null);
+  const footerBackgroundRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
   const [width, height] = useDeviceSize();
   const [tl, setTl] = useState(() => gsap.timeline());
 
@@ -24,7 +23,14 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
       tl.fromTo(
         mainContainerRef.current!,
         { alpha: 0, x: "-10%" },
-        { alpha: 1, x: 0, duration: 0.4 }
+        { alpha: 1, x: 0, duration: 0.5 }
+      ).to(
+        footerBackgroundRef.current!,
+        {
+          clipPath: "polygon(65% 50%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)",
+          duration: 0.3,
+        },
+        "-=0.3"
       );
     });
     return () => {
@@ -50,52 +56,6 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
     };
   }, [mouseRef]);
 
-  /** Footer scale in SM*/
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      let mm = gsap.matchMedia();
-      mm.add("(max-width: 768px)", () => {
-        gsap.fromTo(footerBackgroundRef.current, { x: 0 }, { x: -50 }); //TODO: popraw animacje
-        // separatorIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
-        // hideElementsInYAnimation(
-        //   [
-        //     homeRef.current!,
-        //     aboutRef.current!,
-        //     projectsRef.current!,
-        //     contactRef.current!,
-        //     githubRef.current!,
-        //     linkedinRef.current!,
-        //   ].reverse(),
-        //   0,
-        //   1.5,
-        //   0.04,
-        //   0,
-        //   -60
-        // );
-      });
-      mm.add("(min-width: 769px)", () => {
-        // hamburgerIntoSeparatorAnimation(hamburgerIconRef1, hamburgerIconRef2);
-        // revealElementsInYAnimation(
-        //   [
-        //     homeRef.current!,
-        //     aboutRef.current!,
-        //     projectsRef.current!,
-        //     contactRef.current!,
-        //     githubRef.current!,
-        //     linkedinRef.current!,
-        //   ],
-        //   0,
-        //   0.8,
-        //   0.04,
-        //   -60,
-        //   0
-        // );
-      });
-    });
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <React.Fragment>
       {/* landingPage */}
@@ -103,7 +63,7 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
         // style={{
         //   backgroundImage: `url("/temporary-bg/iPhone14ProMax-1.jpg")`,
         // }}
-        className="h-screen flex flex-col justify-between bg-background-1  relative"
+        className="h-screen flex flex-col justify-between bg-background-1 relative"
       >
         <div
           className="absolute h-screen bg-no-repeat bg-cover bg-center top-0 left-0 right-0 bottom-0"
@@ -112,13 +72,22 @@ const MainLayout: FunctionComponent<Props> = (props: Props) => {
           }}
           ref={mainContainerRef}
         ></div>
-        <Navigation timeline={tl} />
+        <div className="text-white absolute grid place-items-center h-screen w-full text-5xl">
+          <div>
+            <div>jeden text</div>
+            <div>drugi text</div>
+          </div>
+        </div>
+        <Navigation timeline={tl} footerRef={footerRef} />
         <div className="flex justify-center items-center">
           {/* <ImageRevealing /> */}
         </div>
-        <div className="relative bg-background-1">
-          <div className="w-full absolute -bottom-1" ref={footerBackgroundRef}>
-            <img src="/landingPageFooter.svg" className="w-full" />
+        <div className="relative bg-background-1" ref={footerRef}>
+          <div
+            className="w-full absolute -bottom-1 h-24 bg-background-2 clip-path-footerStartStatePath"
+            ref={footerBackgroundRef}
+          >
+            {/* <img src="/landingPageFooter.svg" className="w-full" /> */}
           </div>
           <div
             className="absolute bottom-2 flex justify-center items-center w-full"

@@ -23,9 +23,13 @@ import useDeviceSize from "../hooks/useDeviceSize";
 
 interface Props {
   timeline: gsap.core.Timeline;
+  footerRef: React.RefObject<HTMLDivElement>;
   // children: React.ReactNode;
 }
-const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
+const Navigation: FunctionComponent<Props> = ({
+  timeline,
+  footerRef,
+}: Props) => {
   ////vars
   let hamburgerIconRef1 = useRef<HTMLDivElement>(null);
   let hamburgerIconRef2 = useRef<HTMLDivElement>(null);
@@ -36,30 +40,68 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   let githubRef = useRef<HTMLDivElement>(null);
   let linkedinRef = useRef<HTMLDivElement>(null);
   let logoRef = useRef<HTMLDivElement>(null);
+  let homeMobileRef = useRef<HTMLLIElement>(null);
+  let aboutMobileRef = useRef<HTMLLIElement>(null);
+  let projectsMobileRef = useRef<HTMLLIElement>(null);
+  let contactMobileRef = useRef<HTMLLIElement>(null);
+  let githubMobileRef = useRef<HTMLDivElement>(null);
+  let linkedinMobileRef = useRef<HTMLDivElement>(null);
+  let mobileNavigationRef = useRef<HTMLDivElement>(null);
   const [isHamburger, setIsHamburger] = useState(true);
+  const [isShowMobileNavigation, setIsShowMobileNavigation] = useState(false);
   const [width, height] = useDeviceSize();
+
+  ////utils
+  const showMobileNavigation = () => {
+    const tl = gsap.timeline();
+    tl.to(footerRef.current, { y: 200, duration: 0.4 }).to(
+      mobileNavigationRef.current,
+      {
+        clipPath: "polygon(3% 0%, 100% 0%, 100% 100%, 100% 100%, 15% 90%)",
+        duration: 0.3,
+      },
+      "-=0.3"
+    );
+    setIsShowMobileNavigation(true);
+  };
+  const hideMobileNavigation = useCallback(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ ease: "elastic.out(1, 0.3)" });
+      tl.to(mobileNavigationRef.current, {
+        clipPath: "polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 70%)",
+        duration: 0.3,
+      }).to(footerRef.current, { y: 0, duration: 0.3 }, "-=0.3");
+    });
+    setIsShowMobileNavigation(false);
+  }, [footerRef]);
 
   ////logic
   const isLessThanOrEqualMdSize = useCallback(() => {
     return width < 768 ? true : false;
   }, [width]);
 
-  /** Starting effect that hides clone od hamburger (clone that is used later for making "X" sign) */
-  // useEffect(() => {
-  //   gsap.to(hamburgerIconRef2.current, { autoAlpha: 0 });
-  // }, [hamburgerIconRef2]);
-
   /** Toggling HamburgerIcon and "X" */
   function toggleHamburgerIcon() {
     if (isHamburger && isLessThanOrEqualMdSize()) {
       hamburgerIntoXAnimation(hamburgerIconRef1, hamburgerIconRef2);
+      showMobileNavigation();
       setIsHamburger(false);
     }
     if (!isHamburger && isLessThanOrEqualMdSize()) {
       XIntoHamburgerAnimation(hamburgerIconRef1, hamburgerIconRef2);
+      hideMobileNavigation();
       setIsHamburger(true);
     }
   }
+  /** Toggling mobile navigation */
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      let mm = gsap.matchMedia();
+      mm.add("(min-width: 769)", () => {});
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   /** Triggering animation of Hamburger Icon when media query changes */
   useEffect(() => {
@@ -106,6 +148,24 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
     return () => ctx.revert();
   }, []);
 
+  /** Getting rid of Mobile Menu when mediaQuery is at least "md"  */
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      let mm = gsap.matchMedia();
+
+      mm.add("(min-width: 769px)", () => {
+        console.log(isShowMobileNavigation);
+        if (isShowMobileNavigation) {
+          hideMobileNavigation();
+          setIsShowMobileNavigation(false);
+        }
+      });
+      mm.add("(max-width: 768px)", () => {});
+    });
+
+    return () => ctx.revert();
+  }, [isShowMobileNavigation, hideMobileNavigation]);
+
   /** Main timeline animation */
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -122,7 +182,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
     };
   }, [timeline]);
 
-  ////utils - delete later
+  //TODO: delete later
   function alertHandler(message: string) {
     alert(message);
   }
@@ -131,6 +191,179 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
   return (
     <React.Fragment>
       <div className="relative">
+        {/* mobile navigation - start */}
+        <div
+          className=" bg-background-2 w-full h-screen z-10 clip-path-mobileNavigationStartPath fixed"
+          ref={mobileNavigationRef}
+        >
+          <div>
+            <ul className="uppercase text-lg font-quicksand font-semibold text-white flex flex-col gap-7 justify-end items-end pt-[5.5rem] pr-8">
+              <li
+                className="cursor-pointer"
+                ref={homeMobileRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  homeMobileRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  homeMobileRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    <span className="">home</span>
+                  </span>
+                </Link>
+              </li>
+              <li
+                className="cursor-pointer"
+                ref={aboutMobileRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  aboutMobileRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  aboutMobileRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    about
+                  </span>
+                </Link>
+              </li>
+              <li
+                className="cursor-pointer"
+                ref={projectsMobileRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  projectsMobileRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  projectsMobileRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    projects
+                  </span>
+                </Link>
+              </li>
+              <li
+                className="cursor-pointer"
+                ref={contactMobileRef}
+                onMouseEnter={mouseEventsAnimationHandler.bind(
+                  null,
+                  contactMobileRef,
+                  1,
+                  1.1,
+                  0.3
+                )}
+                onMouseLeave={mouseEventsAnimationHandler.bind(
+                  null,
+                  contactMobileRef,
+                  1.1,
+                  1,
+                  0.3
+                )}
+              >
+                <Link href={"/"}>
+                  <span onClick={alertHandler.bind(null, "not implemented")}>
+                    contact
+                  </span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div className="flex flex-col gap-4 justify-end items-end">
+            <div className="pt-20 pr-8 w-20">
+              <hr />
+            </div>
+            <div
+              ref={githubMobileRef}
+              className="cursor-pointer z-50 pr-8 pt-4 "
+              onMouseEnter={mouseEventsAnimationHandler.bind(
+                null,
+                githubMobileRef,
+                1,
+                1.1,
+                0.3
+              )}
+              onMouseLeave={mouseEventsAnimationHandler.bind(
+                null,
+                githubMobileRef,
+                1.1,
+                1,
+                0.3
+              )}
+            >
+              <Link href="/">
+                <a>
+                  <Image
+                    src={"/githubIcon.svg"}
+                    alt="gitHubIcon"
+                    width={25}
+                    height={25}
+                    onClick={alertHandler.bind(null, "not implemented")}
+                  />
+                </a>
+              </Link>
+            </div>
+            <div
+              ref={linkedinMobileRef}
+              className="cursor-pointer z-50 pr-8"
+              onMouseEnter={mouseEventsAnimationHandler.bind(
+                null,
+                linkedinMobileRef,
+                1,
+                1.1,
+                0.3
+              )}
+              onMouseLeave={mouseEventsAnimationHandler.bind(
+                null,
+                linkedinMobileRef,
+                1.1,
+                1,
+                0.3
+              )}
+            >
+              <Link href="/">
+                <a>
+                  <Image
+                    src={"/linkedinIcon.svg"}
+                    alt="linkedInIcon"
+                    width={25}
+                    height={25}
+                    onClick={alertHandler.bind(null, "not implemented")}
+                  />
+                </a>
+              </Link>
+            </div>
+          </div>
+        </div>
+        {/* mobile navigation - end */}
+
         <div className="absolute top-6 left-6" ref={logoRef}>
           <img
             src={"/logo2.svg"}
@@ -145,7 +378,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
           >
             <ul className="uppercase text-xs font-quicksand font-semibold text-white flex gap-4 justify-end items-center">
               <li
-                className="cursor-pointer transition ease-out hover:scale-110"
+                className="cursor-pointer"
                 ref={homeRef}
                 onMouseEnter={mouseEventsAnimationHandler.bind(
                   null,
@@ -169,7 +402,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
                 </Link>
               </li>
               <li
-                className="cursor-pointer transition ease-out hover:scale-105"
+                className="cursor-pointer"
                 ref={aboutRef}
                 onMouseEnter={mouseEventsAnimationHandler.bind(
                   null,
@@ -193,7 +426,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
                 </Link>
               </li>
               <li
-                className="cursor-pointer transition ease-out hover:scale-105"
+                className="cursor-pointer"
                 ref={projectsRef}
                 onMouseEnter={mouseEventsAnimationHandler.bind(
                   null,
@@ -217,7 +450,7 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
                 </Link>
               </li>
               <li
-                className="cursor-pointer transition ease-out hover:scale-105"
+                className="cursor-pointer"
                 ref={contactRef}
                 onMouseEnter={mouseEventsAnimationHandler.bind(
                   null,
@@ -305,10 +538,10 @@ const Navigation: FunctionComponent<Props> = ({ timeline }: Props) => {
             </div>
           </div>
           <div
-            className="w-9 h-9 absolute transition ease-out hover:scale-110 md:hover:scale-100 top-6 right-8 "
+            className="w-9 h-9 absolute transition ease-out hover:scale-110 md:hover:scale-100 top-6 right-8 z-50"
             onClick={toggleHamburgerIcon}
           >
-            <div className="absolute top-0 left-0" ref={hamburgerIconRef1}>
+            <div className="absolute top-0 left-0 z-20" ref={hamburgerIconRef1}>
               <Image
                 src={"/hamburger.svg"}
                 alt="hamburger icon"
